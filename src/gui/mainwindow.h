@@ -2,6 +2,7 @@
 #define NEOVIM_QT_MAINWINDOW
 
 #include <QMainWindow>
+#include <QCloseEvent>
 #include <QStackedWidget>
 #include <QTabBar>
 #include <QSplitter>
@@ -32,6 +33,7 @@ public slots:
 	void delayedShow(DelayedShow type=DelayedShow::Normal);
 signals:
 	void neovimAttached(bool);
+	void closing(int);
 protected:
 	virtual void closeEvent(QCloseEvent *ev) Q_DECL_OVERRIDE;
 	virtual void changeEvent(QEvent *ev) Q_DECL_OVERRIDE;
@@ -41,7 +43,7 @@ private slots:
 	void neovimMaximized(bool);
 	void neovimSuspend();
 	void neovimFullScreen(bool);
-	void neovimGuiCloseRequest();
+	void neovimGuiCloseRequest(int);
 	void neovimExited(int status);
 	void neovimError(NeovimConnector::NeovimError);
 	void reconnectNeovim();
@@ -78,6 +80,7 @@ private:
 	QAction *m_actPaste;
 	QAction *m_actSelectAll;
 	ScrollBar *m_scrollbar;
+	int m_exitStatus = 0;
 };
 
 } // Namespace
