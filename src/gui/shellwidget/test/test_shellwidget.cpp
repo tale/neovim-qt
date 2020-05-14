@@ -105,8 +105,11 @@ void Test::diffWidgetOutput(QString name)
 void Test::render()
 {
 	ShellWidget w;
+	w.setShellFont("Monospace", 11, -1, false, false);
 	w.resizeShell(20, 20);
 	w.show();
+
+	QCOMPARE(w.font().key(), "Monospace,11,-1,2,50,0,0,0,1,0");
 
 	w.put("hello", 2, 2, HighlightAttribute());
 	w.put("fffffff", 3, 3, HighlightAttribute(Qt::red, Qt::black, Qt::white, false, false, false, false, false));
