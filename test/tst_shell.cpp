@@ -202,13 +202,19 @@ private slots:
 			<< 1 << 1 << QByteArray("cq");
 		QTest::newRow("2cq")
 			<< 2 << 2 << QByteArray("2cq");
+		// Overflows - this generates an exit code 0, but the original count is
+		// passed to us, the status code size is platform specific
+#if defined(Q_OS_WIN32)
+		QTest::newRow("4294967295cq")
+			<< 4294967295 << 4294967295 << QByteArray("4294967295cq");
+		QTest::newRow("4294967296cq")
+			<< 4294967296 << 0 << QByteArray("4294967296cq");
+#else
 		QTest::newRow("255cq")
 			<< 255 << 255 << QByteArray("255cq");
-		// Overflow except Windows, this generates an exit code 0, but the
-		// original count is passed to us
-		// Commented out as this test doesn't pass on Windows
-//		QTest::newRow("256cq")
-//			<< 256 << 0 << QByteArray("256cq");
+		QTest::newRow("256cq")
+			<< 256 << 0 << QByteArray("256cq");
+#endif
 		// a bit of corner case, but nvim exits with
 		// status 0 and provides us count 0 - calling it with nvim -c
 		// actually causes an error with an invalid range, so it can not run
