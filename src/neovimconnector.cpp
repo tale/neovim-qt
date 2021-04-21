@@ -7,6 +7,7 @@
 #include "msgpackrequest.h"
 #include "neovimconnectorhelper.h"
 #include "msgpackiodevice.h"
+#include "compat.h"
 
 namespace NeovimQt {
 
@@ -274,8 +275,13 @@ NeovimConnector* NeovimConnector::spawn(const QStringList& params, const QString
 	c->m_spawnArgs = params;
 	c->m_spawnExe = exe;
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
 	connect(p, SIGNAL(error(QProcess::ProcessError)),
 			c, SLOT(processError(QProcess::ProcessError)));
+#else
+	connect(p, &QProcess::errorOccurred,
+			c, &NeovimConnector::processError);
+#endif
 	connect(p, SIGNAL(finished(int,QProcess::ExitStatus)),
 			c, SIGNAL(processExited(int)));
 	connect(p, &QProcess::started,
@@ -304,8 +310,13 @@ NeovimConnector* NeovimConnector::connectToSocket(const QString& path)
 	c->m_connSocket = path;
 #endif
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
 	connect(s, SIGNAL(error(QLocalSocket::LocalSocketError)),
 			c, SLOT(socketError()));
+#else
+	connect(s, &QLocalSocket::errorOccurred,
+			c, &NeovimConnector::socketError);
+#endif
 	connect(s, &QLocalSocket::connected,
 			c, &NeovimConnector::discoverMetadata);
 	s->connectToServer(c->m_connSocket);
@@ -327,8 +338,13 @@ NeovimConnector* NeovimConnector::connectToHost(const QString& host, int port)
 	c->m_connHost = host;
 	c->m_connPort = port;
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
 	connect(s, SIGNAL(error(QAbstractSocket::SocketError)),
 			c, SLOT(socketError()));
+#else
+	connect(s, &QAbstractSocket::errorOccurred,
+			c, &NeovimConnector::socketError);
+#endif
 	connect(s, &QAbstractSocket::connected,
 			c, &NeovimConnector::discoverMetadata);
 	s->connectToHost(host, port);
@@ -356,7 +372,7 @@ NeovimConnector* NeovimConnector::connectToNeovim(const QString& server)
 	int colon_pos = addr.lastIndexOf(':');
 	if (colon_pos != -1 && colon_pos != 0 && addr[colon_pos-1] != ':') {
 		bool ok;
-		int port = addr.midRef(colon_pos+1).toInt(&ok);
+		int port = midString(addr, colon_pos + 1).toInt(&ok);
 		if (ok) {
 			QString host = addr.mid(0, colon_pos);
 			return connectToHost(host, port);

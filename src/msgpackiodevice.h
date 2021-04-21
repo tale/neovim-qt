@@ -1,6 +1,9 @@
 #ifndef NEOVIM_QT_MSGPACKIODEVICE
 #define NEOVIM_QT_MSGPACKIODEVICE
 
+#include <QIODevice>
+#include <QHash>
+#include <QVariant>
 #include <msgpack.h>
 #include <QHash>
 #include <QIODevice>
@@ -19,7 +22,6 @@ public:
 		NoError=0,
 		InvalidDevice,
 		InvalidMsgpack,
-		UnsupportedEncoding,
 	};
 	Q_ENUM(MsgpackError)
 

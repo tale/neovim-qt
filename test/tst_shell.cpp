@@ -43,7 +43,7 @@ protected:
 
 static void SignalPrintError(QString msg, const QVariant& err) noexcept
 {
-	qWarning() << "Error Signal!" << msg << err;
+	qDebug() << msg << err;
 }
 
 void TestShell::initTestCase() noexcept
