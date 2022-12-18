@@ -1,13 +1,15 @@
 #include "neovimconnector.h"
-#include <QtGlobal>
-#include <QMetaMethod>
-#include <QLocalSocket>
-#include <QTcpSocket>
+
 #include <QFileInfo>
+#include <QLocalSocket>
+#include <QMetaMethod>
+#include <QTcpSocket>
+#include <QtGlobal>
+
+#include "compat.h"
+#include "msgpackiodevice.h"
 #include "msgpackrequest.h"
 #include "neovimconnectorhelper.h"
-#include "msgpackiodevice.h"
-#include "compat.h"
 
 namespace NeovimQt {
 
@@ -279,8 +281,7 @@ NeovimConnector* NeovimConnector::spawn(const QStringList& params, const QString
 	connect(p, SIGNAL(error(QProcess::ProcessError)),
 			c, SLOT(processError(QProcess::ProcessError)));
 #else
-	connect(p, &QProcess::errorOccurred,
-			c, &NeovimConnector::processError);
+	connect(p, &QProcess::errorOccurred, c, &NeovimConnector::processError);
 #endif
 	connect(p, SIGNAL(finished(int,QProcess::ExitStatus)),
 			c, SIGNAL(processExited(int)));
@@ -314,8 +315,7 @@ NeovimConnector* NeovimConnector::connectToSocket(const QString& path)
 	connect(s, SIGNAL(error(QLocalSocket::LocalSocketError)),
 			c, SLOT(socketError()));
 #else
-	connect(s, &QLocalSocket::errorOccurred,
-			c, &NeovimConnector::socketError);
+	connect(s, &QLocalSocket::errorOccurred, c, &NeovimConnector::socketError);
 #endif
 	connect(s, &QLocalSocket::connected,
 			c, &NeovimConnector::discoverMetadata);

@@ -1,9 +1,6 @@
 #ifndef NEOVIM_QT_MSGPACKIODEVICE
 #define NEOVIM_QT_MSGPACKIODEVICE
 
-#include <QIODevice>
-#include <QHash>
-#include <QVariant>
 #include <msgpack.h>
 #include <QHash>
 #include <QIODevice>
@@ -18,8 +15,9 @@ class MsgpackIODevice: public QObject
 	Q_OBJECT
 	Q_PROPERTY(MsgpackError error READ errorCause NOTIFY error)
 public:
-	enum MsgpackError {
-		NoError=0,
+	enum MsgpackError
+	{
+		NoError = 0,
 		InvalidDevice,
 		InvalidMsgpack,
 	};

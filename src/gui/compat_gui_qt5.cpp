@@ -3,5 +3,5 @@
 
 QRect screenAvailableGeometry(const QWidget* w)
 {
-       return QApplication::desktop()->availableGeometry(w);
+	return QApplication::desktop()->availableGeometry(w);
 }

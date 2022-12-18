@@ -1716,7 +1716,8 @@ QVariant Shell::inputMethodQuery(Qt::InputMethodQuery query) const
 {
 	if ( query == Qt::ImFont) {
 		return font();
-	} else if ( query == Qt::ImCursorRectangle ) {
+	}
+	else if ( query == Qt::ImCursorRectangle ) {
 		return QRect(neovimCursorTopLeft(), cellSize());
 	}
 
