@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>nvim-qt</string>
+	<string>Neovim</string>
 	<key>CFBundleDisplayName</key>
 	<string>Neovim</string>
 	<key>CFBundleGetInfoString</key>

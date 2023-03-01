@@ -81,21 +81,16 @@ add_executable(nvim-qt WIN32 MACOSX_BUNDLE main.cpp
 target_link_libraries(nvim-qt ${QTLIBS} ${MSGPACK_LIBRARIES} neovim-qt-gui)
 
 if(APPLE)
+	set_target_properties(nvim-qt PROPERTIES OUTPUT_NAME "Neovim")
 	add_custom_command(TARGET nvim-qt COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_SOURCE_DIR}/runtime/
-		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nvim-qt.app/Contents/Resources/runtime
+		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Neovim.app/Contents/Resources/runtime
 		COMMENT "Copying runtime into bundle")
 #	TODO: Bundle Qt, currently conflicts with brew Qt
 #	add_custom_command(TARGET nvim-qt COMMAND macdeployqt
 #		ARGS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nvim-qt.app
 #		COMMENT "Bundling Qt libraries")
 	
-	# move to Neovim.app and codesign using my signature
-	add_custom_command(TARGET nvim-qt COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nvim-qt.app
-		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Neovim.app
-		COMMENT "Copying bundle to Neovim.app")
-
 	add_custom_command(TARGET nvim-qt COMMAND codesign
 		ARGS --force --deep --sign "Hashbang Productions" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Neovim.app
 		COMMENT "Signing Neovim.app")
