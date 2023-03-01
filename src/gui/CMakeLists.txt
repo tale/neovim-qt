@@ -35,9 +35,6 @@ endif()
 
 add_subdirectory(shellwidget)
 
-add_executable(nvim-qt-cli ../cli/main.cpp ../cli/socket.cpp)
-target_link_libraries(nvim-qt-cli Qt5::Widgets Qt5::Network)
-
 include(GNUInstallDirs)
 set(RUNTIME_PATH )
 
@@ -47,12 +44,13 @@ add_library(neovim-qt-gui
 	errorwidget.cpp
 	input.cpp
 	mainwindow.cpp
-	tcpserver.cpp
 	popupmenu.cpp
 	popupmenumodel.cpp
 	scrollbar.cpp
 	shell.cpp
 	tabline.cpp
+	tcpserver.cpp
+	tcpsocket.cpp
 	treeview.cpp
 	${SRCS_PLATFORM}
 	${NEOVIM_RCC_SOURCES})
@@ -83,11 +81,6 @@ if(APPLE)
 #	add_custom_command(TARGET nvim-qt COMMAND macdeployqt
 #		ARGS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nvim-qt.app
 #		COMMENT "Bundling Qt libraries")
-	add_custom_command(TARGET nvim-qt-cli POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-		$<TARGET_FILE:nvim-qt-cli>
-		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nvim-qt.app/Contents/MacOS/nvim-qt-cli
-		COMMENT "Copying nvim-qt-cli into bundle")
 endif()
 
 # Link Time Optimization, especially useful for unused auto-generated code.

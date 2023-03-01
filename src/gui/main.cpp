@@ -9,6 +9,7 @@
 #endif
 #include "neovimconnector.h"
 #include "app.h"
+#include "tcpsocket.h"
 
 #if defined(Q_OS_WIN) && defined(USE_STATIC_QT)
 #include <QtPlugin>
@@ -58,10 +59,8 @@ int cli_main(int argc, char **argv)
 	NeovimQt::App::processCommandlineOptions(p, app.arguments());
 	NeovimQt::App::checkArgumentsMayTerminate(p);
 
-	if (!QProcess::startDetached(app.applicationFilePath(), argsNoFork)) {
-		qWarning() << "Unable to fork into background";
-		return -1;
-	}
+	TcpSocket socket;
+	socket.connectToServer(argsNoFork);
 
 	return 0;
 }

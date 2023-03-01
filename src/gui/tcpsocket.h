@@ -6,15 +6,14 @@
 #include <QAbstractSocket>
 #include <QCoreApplication>
 #include <QDebug>
-#include <QFileInfo>
 #include <QProcess>
 
-class Socket : public QObject {
+class TcpSocket : public QObject {
 	Q_OBJECT
 
 public:
-	explicit Socket(QObject *parent = nullptr);
-	void connectToServer(int argc, char *argv[]);
+	explicit TcpSocket(QObject *parent = nullptr);
+	void connectToServer(QStringList args);
 
 private slots:
 	void onError(QAbstractSocket::SocketError socketError);
@@ -24,3 +23,4 @@ private:
 };
 
 #endif // NEOVIM_QT_SOCKET
+
