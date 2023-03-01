@@ -55,7 +55,6 @@ add_library(neovim-qt-gui
 	${SRCS_PLATFORM}
 	${NEOVIM_RCC_SOURCES})
 target_link_libraries(neovim-qt-gui ${QTLIBS} qshellwidget neovim-qt)
-add_dependencies(neovim-qt-gui nvim-qt-cli)
 
 if(APPLE)
 	set_property(SOURCE app.cpp PROPERTY COMPILE_DEFINITIONS
@@ -81,6 +80,16 @@ if(APPLE)
 #	add_custom_command(TARGET nvim-qt COMMAND macdeployqt
 #		ARGS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nvim-qt.app
 #		COMMENT "Bundling Qt libraries")
+	
+	# move to Neovim.app and codesign using my signature
+	add_custom_command(TARGET nvim-qt COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nvim-qt.app
+		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Neovim.app
+		COMMENT "Copying bundle to Neovim.app")
+
+	add_custom_command(TARGET nvim-qt COMMAND codesign
+		ARGS --force --deep --sign "Hashbang Productions" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Neovim.app
+		COMMENT "Signing Neovim.app")
 endif()
 
 # Link Time Optimization, especially useful for unused auto-generated code.
