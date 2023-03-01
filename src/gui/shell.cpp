@@ -1471,6 +1471,13 @@ void Shell::wheelEvent(QWheelEvent *ev)
 {
 	int invertConstant{ (ev.inverted()) ? -1 : 1 };
 
+#ifdef Q_OS_MACOS
+	auto naturalScrolling = CFPreferencesGetAppBooleanValue(CFSTR("com.apple.swipescrolldirection"), kCFPreferencesCurrentUser, NULL);
+	if (naturalScrolling) {
+		invertConstant *= -1;
+	}
+#endif
+
 	QPoint scrollRemainderAndEvent { (ev.angleDelta() * invertConstant) + scrollRemainderOut };
 
 	scrollRemainderOut.rx() = scrollRemainderAndEvent.x() % deltasPerStep;

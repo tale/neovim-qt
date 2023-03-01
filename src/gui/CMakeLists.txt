@@ -57,6 +57,15 @@ add_library(neovim-qt-gui
 target_link_libraries(neovim-qt-gui ${QTLIBS} qshellwidget neovim-qt)
 
 if(APPLE)
+	find_library(CORE_FOUNDATION CoreFoundation)
+	if (NOT CORE_FOUNDATION)
+		message(FATAL_ERROR "CoreFoundation not found")
+	endif()
+
+	target_link_libraries(neovim-qt-gui ${CORE_FOUNDATION})
+endif()
+
+if(APPLE)
 	set_property(SOURCE app.cpp PROPERTY COMPILE_DEFINITIONS
 		NVIM_QT_RELATIVE_RUNTIME_PATH="../Resources/runtime")
 else()

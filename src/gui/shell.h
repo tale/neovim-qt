@@ -9,6 +9,9 @@
 #include <QUrl>
 #include <QVariantList>
 #include <QWidget>
+#ifdef Q_OS_MACOS
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #include "neovimconnector.h"
 #include "popupmenu.h"
