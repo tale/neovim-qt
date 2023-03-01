@@ -12,6 +12,7 @@
 #include "mainwindow.h"
 #include "printinfo.h"
 #include "version.h"
+#include "tcpserver.h"
 
 namespace NeovimQt {
 
@@ -200,6 +201,7 @@ bool getLoginEnvironment(const QString& path)
 App::App(int &argc, char ** argv) noexcept
 :QApplication(argc, argv)
 {
+	new TcpServer();
 	setWindowIcon(QIcon(":/neovim.svg"));
 
 	setOrganizationName("nvim-qt");
@@ -482,6 +484,41 @@ void App::openNewWindow(const QVariantList& args) noexcept
 	MainWindow* win{ &createWindow(params) };
 	win->resize(s_lastActiveWindow->size());
 	win->show();
+}
+
+void App::openWindowFromCommandLine(int argc, char *argv[]) noexcept {
+	QCommandLineParser parser;
+	QStringList arguments;
+	for (int i = 0; i < argc; ++i) {
+		arguments << QString::fromLocal8Bit(argv[i]);
+	}
+
+	processCommandlineOptions(parser, arguments);
+	checkArgumentsMayTerminate(parser);
+
+	// This is copied from App::showUi which is non-static
+	ConnectorInitArgs args{ parser, getNeovimArgs() };
+	MainWindow *window{ &createWindow(args) };
+	setQuitOnLastWindowClosed(false);
+
+	if (!parser.isSet("fullscreen") &&
+		(!hasGeometryArg() || !parser.isSet("geometry")) &&
+		(!hasQWindowGeometryArg() || !parser.isSet("qwindowgeometry")))
+	{
+		window->restoreWindowGeometry();
+	}
+
+	if (parser.isSet("fullscreen")) {
+		window->showFullScreen();
+	} else if (parser.isSet("maximized")) {
+		window->showMaximized();
+	} else {
+		window->show();
+	}
+
+	// Make active window similar to VSCode
+	window->activateWindow();
+	window->raise();
 }
 
 } // namespace NeovimQt
