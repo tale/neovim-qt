@@ -202,10 +202,15 @@ App::App(int &argc, char ** argv) noexcept
 :QApplication(argc, argv)
 {
 	new TcpServer();
-	setWindowIcon(QIcon(":/neovim.svg"));
 
-	setOrganizationName("nvim-qt");
-	setApplicationName("nvim-qt");
+#ifndef Q_OS_MAC
+	// On macOS, the application icon is set in the Info.plist file
+	setWindowIcon(QIcon(":/neovim.svg"));
+#endif
+
+	setApplicationName("Neovim");
+	setOrganizationName("Tale");
+	setOrganizationDomain("tale.me");
 
 #ifdef Q_OS_MAC
 	QByteArray shellPath = qgetenv("SHELL");
