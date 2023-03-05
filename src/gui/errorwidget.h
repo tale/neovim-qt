@@ -8,22 +8,22 @@
 
 namespace NeovimQt {
 
-class ErrorWidget: public QWidget {
-	Q_OBJECT
-public:
-	ErrorWidget(QWidget *parent = nullptr);
-public slots:
-	void setText(const QString& text);
-	void showReconnect(bool);
-signals:
-	void reconnectNeovim();
+class ErrorWidget : public QWidget {
+    Q_OBJECT
+  public:
+    ErrorWidget(QWidget *parent = nullptr);
+  public slots:
+    void setText(const QString &text);
+    void showReconnect(bool);
+  signals:
+    void reconnectNeovim();
 
-private:
-	QLabel *m_errorLabel;
-	QSvgWidget *m_image;
-	QPushButton *m_closeButton;
+  private:
+    QLabel *m_errorLabel;
+    QSvgWidget *m_image;
+    QPushButton *m_closeButton;
 };
 
-} // Namespace
+} // namespace NeovimQt
 
 #endif

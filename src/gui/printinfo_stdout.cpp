@@ -4,10 +4,9 @@
 
 namespace NeovimQt {
 
-void PrintInfo(const QString& message) noexcept
-{
-	QTextStream out{ stdout };
-	out << message;
+void PrintInfo(const QString &message) noexcept {
+    QTextStream out{stdout};
+    out << message;
 }
 
 } // namespace NeovimQt

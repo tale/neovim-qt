@@ -6,29 +6,30 @@
 namespace NeovimQt {
 
 struct PopupMenuItem {
-	QString text;
-	QString kind;
-	QString extra;
-	QString info;
+    QString text;
+    QString kind;
+    QString extra;
+    QString info;
 };
 
-class PopupMenuModel: public QAbstractListModel {
-public:
-	enum Roles{
-		Text=Qt::UserRole,
-		Kind,
-		Extra,
-		Info,
-	};
+class PopupMenuModel : public QAbstractListModel {
+  public:
+    enum Roles {
+        Text = Qt::UserRole,
+        Kind,
+        Extra,
+        Info,
+    };
 
+    PopupMenuModel(QList<PopupMenuItem>);
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index,
+                          int role = Qt::DisplayRole) const;
 
-	PopupMenuModel(QList<PopupMenuItem>);
-	virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-private:
-	QList<PopupMenuItem> m_data;
+  private:
+    QList<PopupMenuItem> m_data;
 };
 
-} // namespace
+} // namespace NeovimQt
 
 #endif

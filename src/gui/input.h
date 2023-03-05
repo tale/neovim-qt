@@ -6,18 +6,19 @@
 #include <QPoint>
 #include <QString>
 
-namespace NeovimQt { namespace Input {
+namespace NeovimQt {
+namespace Input {
 
 /// Returns the QMap of all NeoVim-recognized special keys.
-const QMap<int, QString>& GetSpecialKeysMap() noexcept;
+const QMap<int, QString> &GetSpecialKeysMap() noexcept;
 
 /// Convert Qt key input into Neovim key-notation. See QKeyEvent.
-QString convertKey(const QKeyEvent& ev) noexcept;
+QString convertKey(const QKeyEvent &ev) noexcept;
 
 /// Return keyboard modifier prefix. Ex) "C-", "A-" or "C-S-A-"
 ///
-/// NOTE: On Win32 Ctrl+Alt are never passed together, since we can't distinguish
-/// between Ctrl+Alt and AltGr (see Vim/os_win32.c).
+/// NOTE: On Win32 Ctrl+Alt are never passed together, since we can't
+/// distinguish between Ctrl+Alt and AltGr (see Vim/os_win32.c).
 QString GetModifierPrefix(Qt::KeyboardModifiers mod) noexcept;
 
 /// Convert mouse event information into Neovim key notation. See QMouseEvent.
@@ -29,12 +30,9 @@ QString GetModifierPrefix(Qt::KeyboardModifiers mod) noexcept;
 ///   This value is only used for LeftMouse events.
 ///
 /// @return The Neovim event string, or an empty string if the event is invalid.
-QString convertMouse(
-	Qt::MouseButton bt,
-	QEvent::Type type,
-	Qt::KeyboardModifiers mod,
-	QPoint pos,
-	uint8_t clicksCount) noexcept;
+QString convertMouse(Qt::MouseButton bt, QEvent::Type type,
+                     Qt::KeyboardModifiers mod, QPoint pos,
+                     uint8_t clicksCount) noexcept;
 
 /// Platform specific Qt key modifier bitmask for 'Control'.
 Qt::KeyboardModifiers ControlModifier() noexcept;
@@ -49,10 +47,9 @@ Qt::KeyboardModifiers CmdModifier() noexcept;
 Qt::Key Key_Cmd() noexcept;
 
 /// Modify QKeyEvent parameters specific to the current platform.
-QKeyEvent CreatePlatformNormalizedKeyEvent(
-	QEvent::Type type,
-	int key,
-	Qt::KeyboardModifiers mod,
-	const QString& text) noexcept;
+QKeyEvent CreatePlatformNormalizedKeyEvent(QEvent::Type type, int key,
+                                           Qt::KeyboardModifiers mod,
+                                           const QString &text) noexcept;
 
-} } // namespace NeovimQt:Input
+} // namespace Input
+} // namespace NeovimQt

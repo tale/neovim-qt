@@ -1,24 +1,24 @@
 #ifndef NEOVIM_QT_SERVER
 #define NEOVIM_QT_SERVER
 
-#include <QObject>
-#include <QTcpSocket>
-#include <QTcpServer>
 #include <QDebug>
+#include <QObject>
+#include <QTcpServer>
+#include <QTcpSocket>
 
 class TcpServer : public QObject {
-	Q_OBJECT
+    Q_OBJECT
 
-public:
-	explicit TcpServer(QObject *parent = nullptr);
+  public:
+    explicit TcpServer(QObject *parent = nullptr);
 
-private slots:
-	void newConnection();
-	void readyRead();
+  private slots:
+    void newConnection();
+    void readyRead();
 
-private:
-	QTcpServer *server;
-	QTcpSocket *client;
+  private:
+    QTcpServer *server;
+    QTcpSocket *client;
 };
 
 #endif // NEOVIM_QT_SERVER
