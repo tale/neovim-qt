@@ -59,6 +59,15 @@ int cli_main(int argc, char **argv)
 	NeovimQt::App::processCommandlineOptions(p, app.arguments());
 	NeovimQt::App::checkArgumentsMayTerminate(p);
 
+	// Handle expanding the positional file path to an absolute path
+	QStringList positionalArguments = p.positionalArguments();
+	QString filePath = positionalArguments.at(0);
+	QFileInfo fileInfo(filePath);
+
+	// Replace the positional argument with the absolute path
+	int index = argsNoFork.indexOf(filePath);
+	argsNoFork.replace(index, fileInfo.canonicalFilePath());
+
 	TcpSocket socket;
 	socket.connectToServer(argsNoFork);
 

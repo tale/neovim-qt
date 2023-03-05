@@ -10,7 +10,6 @@ void TcpSocket::connectToServer(QStringList args) {
 	qDebug() << "Connecting to TCP Server...";
 	socket->connectToHost("localhost", 2401);
 
-
 	if(socket->waitForConnected()) {
 		for(int i = 0; i < args.length(); i++) {
 			qDebug() << "Sending: " << args[i]; 
