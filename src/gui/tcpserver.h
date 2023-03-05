@@ -6,11 +6,19 @@
 #include <QTcpServer>
 #include <QDebug>
 
+#include "app.h"
+
+struct MultiWindowState {
+	QString path;
+	NeovimQt::MainWindow *window;
+};
+
 class TcpServer : public QObject {
 	Q_OBJECT
 
 public:
 	explicit TcpServer(QObject *parent = nullptr);
+	void registerWindow(QCommandLineParser &parser, NeovimQt::MainWindow *window);
 
 private slots:
 	void newConnection();
@@ -19,6 +27,7 @@ private slots:
 private:
 	QTcpServer *server;
 	QTcpSocket *client;
+	QList<MultiWindowState> windows;
 };
 
 #endif // NEOVIM_QT_SERVER

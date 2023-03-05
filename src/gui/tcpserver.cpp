@@ -1,12 +1,9 @@
 #include "tcpserver.h"
-#include "app.h"
-
-#include <QWidget>
-#include <QHBoxLayout>
-#include <QFileInfo>
 
 TcpServer::TcpServer(QObject *parent) : QObject(parent) {
 	server = new QTcpServer(this);
+	windows = QList<MultiWindowState>();
+
 	connect(server, &QTcpServer::newConnection, this, &TcpServer::newConnection);
 
 	if(!server->listen(QHostAddress::LocalHost, 2401)) {
@@ -14,6 +11,16 @@ TcpServer::TcpServer(QObject *parent) : QObject(parent) {
 	} else {
 		qDebug() << "TCP Server started";
 	}
+}
+
+void TcpServer::registerWindow(QCommandLineParser &parser, NeovimQt::MainWindow *window) {
+	MultiWindowState state = {
+		parser.positionalArguments().at(0),
+		window
+	};
+
+	windows.append(state);
+	qDebug() << "Tracking: " << windows.length() << " windows";
 }
 
 void TcpServer::newConnection() {
@@ -29,12 +36,32 @@ void TcpServer::readyRead() {
 	QList<QByteArray> list = data.split('\n');
 	int argc = list.size();
 
-	char *argv[argc];
-	for (int i = 0; i < argc; i++) {
-		argv[i] = list[i].data();
+	QStringList arguments;
+	for (int i = 0; i < argc; ++i) {
+		arguments << QString::fromLocal8Bit(list[i].data());
 	}
 
-	NeovimQt::App::openWindowFromCommandLine(argc, argv);
+	QCommandLineParser parser;
+	NeovimQt::App::processCommandlineOptions(parser, arguments);
+
+	// Search for already existing windows
+	for (int i = 0; i < windows.size(); i++) {
+		if (windows[i].path == parser.positionalArguments().at(0)) {
+			// Window already exists so we should focus it
+			windows[i].window->activateWindow();
+			windows[i].window->raise();
+
+			qDebug() << "Found existing window for path: " << windows[i].path;
+			client->disconnectFromHost();
+			client->disconnect();
+			return;
+		}
+	}
+
+	NeovimQt::MainWindow *window = NeovimQt::App::openWindowFromCommandLine(parser);
+	qDebug() << "Opened new window for path: " << parser.positionalArguments().at(0);
+
+	registerWindow(parser, window);
 	client->disconnectFromHost();
 	client->disconnect();
 }

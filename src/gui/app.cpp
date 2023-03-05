@@ -1,5 +1,6 @@
 #include "app.h"
 
+#include <QtGui/qwindow.h>
 #include <algorithm>
 #include <QDir>
 #include <QFileInfo>
@@ -201,7 +202,7 @@ bool getLoginEnvironment(const QString& path)
 App::App(int &argc, char ** argv) noexcept
 :QApplication(argc, argv)
 {
-	new TcpServer();
+	tcpServer = new TcpServer();
 
 #ifndef Q_OS_MAC
 	// On macOS, the application icon is set in the Info.plist file
@@ -296,6 +297,8 @@ void App::showUi() noexcept
 	} else {
 		win->show();
 	}
+
+	tcpServer->registerWindow(m_parser, win);
 #endif
 }
 
@@ -491,16 +494,7 @@ void App::openNewWindow(const QVariantList& args) noexcept
 	win->show();
 }
 
-void App::openWindowFromCommandLine(int argc, char *argv[]) noexcept {
-	QCommandLineParser parser;
-	QStringList arguments;
-	for (int i = 0; i < argc; ++i) {
-		arguments << QString::fromLocal8Bit(argv[i]);
-	}
-
-	processCommandlineOptions(parser, arguments);
-	checkArgumentsMayTerminate(parser);
-
+MainWindow *App::openWindowFromCommandLine(QCommandLineParser &parser) noexcept {
 	// This is copied from App::showUi which is non-static
 	ConnectorInitArgs args{ parser, getNeovimArgs() };
 	MainWindow *window{ &createWindow(args) };
@@ -524,6 +518,6 @@ void App::openWindowFromCommandLine(int argc, char *argv[]) noexcept {
 	// Make active window similar to VSCode
 	window->activateWindow();
 	window->raise();
+	return window;
 }
-
 } // namespace NeovimQt

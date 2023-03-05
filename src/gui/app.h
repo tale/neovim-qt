@@ -11,6 +11,8 @@
 #include "shell.h"
 #include "mainwindow.h"
 
+class TcpServer;
+
 namespace NeovimQt {
 
 class NeovimConnector;
@@ -25,7 +27,9 @@ public:
 	static void checkArgumentsMayTerminate(QCommandLineParser&) noexcept;
 	static void processCommandlineOptions(QCommandLineParser&, QStringList) noexcept;
 	static void openNewWindow(const QVariantList& args) noexcept;
-	static void openWindowFromCommandLine(int argc, char *argv[]) noexcept;
+
+	TcpServer *tcpServer;
+	static MainWindow *openWindowFromCommandLine(QCommandLineParser &parser) noexcept;
 
 private:
 	static QString getRuntimePath() noexcept;
