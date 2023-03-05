@@ -11,7 +11,7 @@ namespace NeovimQt {
 /// Windows: Displays a messagebox
 ///
 /// Intended to behave the same way as QCommandLineParser's '--help' option.
-void PrintInfo(const QString &message) noexcept;
+void PrintInfo(const QString& message) noexcept;
 
 } // Namespace NeovimQt
 

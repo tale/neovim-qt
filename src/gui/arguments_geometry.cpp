@@ -2,8 +2,14 @@
 
 namespace NeovimQt {
 
-bool hasGeometryArg() { return true; }
+bool hasGeometryArg()
+{
+	return true;
+}
 
-bool hasQWindowGeometryArg() { return false; }
+bool hasQWindowGeometryArg()
+{
+	return false;
+}
 
 } // namespace NeovimQt

@@ -5,14 +5,12 @@
 
 namespace NeovimQt {
 
-class PopupWidgetItem : public QListWidgetItem {
-  public:
-    PopupWidgetItem(const QString &text, const QString &kind = QString(),
-                    const QString &extra = QString(),
-                    const QString &info = QString());
-
-  private:
+class PopupWidgetItem: public QListWidgetItem {
+public:
+	PopupWidgetItem(const QString& text, const QString& kind=QString(),
+			const QString& extra=QString(), const QString& info=QString());
+private:
 };
 
-} // namespace NeovimQt
+} // Namespace
 #endif

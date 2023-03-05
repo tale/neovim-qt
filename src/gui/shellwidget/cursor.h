@@ -1,90 +1,115 @@
 #pragma once
 
+#include <QPaintEvent>
 #include <QColor>
 #include <QObject>
-#include <QPaintEvent>
 #include <QTimer>
 
 #include "highlight.h"
 
-class Cursor : public QObject {
-    Q_OBJECT
+class Cursor : public QObject
+{
+	Q_OBJECT
 
-  signals:
-    void CursorChanged();
+signals:
+	void CursorChanged();
 
-  public:
-    enum class Shape : uint8_t {
-        Block,
-        Horizontal,
-        Vertical,
-    };
+public:
 
-    Cursor() noexcept;
+	enum class Shape : uint8_t
+	{
+		Block,
+		Horizontal,
+		Vertical,
+	};
 
-    void ResetTimer() noexcept;
+	Cursor() noexcept;
 
-    void SetTimer(uint64_t blinkWaitTime, uint64_t blinkOnTime,
-                  uint64_t blinkOffTime) noexcept;
+	void ResetTimer() noexcept;
 
-    void SetColor(const HighlightAttribute &highlight) noexcept {
-        m_background = highlight.GetBackgroundColor();
-        m_foreground = highlight.GetForegroundColor();
-    }
+	void SetTimer(uint64_t blinkWaitTime, uint64_t blinkOnTime, uint64_t blinkOffTime) noexcept;
 
-    void SetStyle(Shape cursorShape, uint8_t cellPercentage) noexcept {
-        m_shape = cursorShape;
-        m_percentage = cellPercentage;
-    }
+	void SetColor(const HighlightAttribute& highlight) noexcept
+	{
+		m_background = highlight.GetBackgroundColor();
+		m_foreground = highlight.GetForegroundColor();
+	}
 
-    void SetIsStyleEnabled(bool isStyleEnabled) noexcept {
-        m_styleEnabled = isStyleEnabled;
-    }
+	void SetStyle(Shape cursorShape, uint8_t cellPercentage) noexcept
+	{
+		m_shape = cursorShape;
+		m_percentage = cellPercentage;
+	}
 
-    void SetIsBusy(bool isBusy) noexcept { m_isBusy = isBusy; }
+	void SetIsStyleEnabled(bool isStyleEnabled) noexcept
+	{
+		m_styleEnabled = isStyleEnabled;
+	}
 
-    bool IsStyleEnabled() const noexcept { return m_styleEnabled && !m_isBusy; }
+	void SetIsBusy(bool isBusy) noexcept
+	{
+		m_isBusy = isBusy;
+	}
 
-    bool IsVisible() const noexcept {
-        return !m_isBusy && m_blinkState != BlinkState::Off;
-    }
+	bool IsStyleEnabled() const noexcept
+	{
+		return m_styleEnabled && !m_isBusy;
+	}
 
-    QColor GetBackgroundColor() const noexcept { return m_background; }
+	bool IsVisible() const noexcept
+	{
+		return !m_isBusy && m_blinkState != BlinkState::Off;
+	}
 
-    QColor GetForegroundColor() const noexcept { return m_foreground; }
+	QColor GetBackgroundColor() const noexcept
+	{
+		return m_background;
+	}
 
-    uint8_t GetPercentage() const noexcept { return m_percentage; }
+	QColor GetForegroundColor() const noexcept
+	{
+		return m_foreground;
+	}
 
-    Shape GetShape() const noexcept { return m_shape; }
+	uint8_t GetPercentage() const noexcept
+	{
+		return m_percentage;
+	}
 
-  private:
-    void TimerInterrupt() noexcept;
+	Shape GetShape() const noexcept
+	{
+		return m_shape;
+	}
 
-    void StartTimer() noexcept;
+private:
+	void TimerInterrupt() noexcept;
 
-    void StopTimer() noexcept;
+	void StartTimer() noexcept;
 
-    enum class BlinkState : uint8_t {
-        Disabled,
-        On,
-        Off,
-        Wait,
-    };
+	void StopTimer() noexcept;
 
-    QColor m_background;
-    QColor m_foreground;
+	enum class BlinkState : uint8_t
+	{
+		Disabled,
+		On,
+		Off,
+		Wait,
+	};
 
-    Shape m_shape{Shape::Block};
-    QVariantList m_modeInfo;
-    QTimer m_timer;
-    BlinkState m_blinkState{BlinkState::Disabled};
+	QColor m_background;
+	QColor m_foreground;
 
-    bool m_styleEnabled{false};
-    bool m_isBusy{false};
+	Shape m_shape{ Shape::Block };
+	QVariantList m_modeInfo;
+	QTimer m_timer;
+	BlinkState m_blinkState{ BlinkState::Disabled };
 
-    uint8_t m_percentage{100};
+	bool m_styleEnabled{ false };
+	bool m_isBusy{ false };
 
-    uint64_t m_blinkWaitTime{0};
-    uint64_t m_blinkOnTime{0};
-    uint64_t m_blinkOffTime{0};
+	uint8_t m_percentage{ 100 };
+
+	uint64_t m_blinkWaitTime{ 0 };
+	uint64_t m_blinkOnTime{ 0 };
+	uint64_t m_blinkOffTime{ 0 };
 };

@@ -1,355 +1,363 @@
-#include "helpers.h"
-#include "shellcontents.h"
 #include <QtTest/QtTest>
+#include "shellcontents.h"
+#include "helpers.h"
 
 #if defined(Q_OS_WIN) && defined(USE_STATIC_QT)
 #include <QtPlugin>
-Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
+Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 #endif
 
-class Test : public QObject {
-    Q_OBJECT
+class Test: public QObject
+{
+	Q_OBJECT
 
-  public:
-    // Initialize a shell with contents
-    //     a b c d e ..
-    //     a b c d e ..
-    //     ...
-    ShellContents initShell(int rows, int cols) {
-        ShellContents s(rows, cols);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                s.value(i, j).SetCharacter('a' + j);
-            }
-        }
-        return s;
-    }
-    // Check if the contents are the same as returned
-    // by initShell
-    void checkInitShell(const ShellContents &s) {
-        for (int i = 0; i < s.rows(); i++) {
-            for (int j = 0; j < s.columns(); j++) {
-                QCOMPARE(s.constValue(i, j).GetCharacter(), uint('a' + j));
-            }
-        }
-    }
-    // True if the shell is clear
-    bool checkClear(const ShellContents &s) {
-        for (int i = 0; i < s.rows(); i++) {
-            for (int j = 0; j < s.columns(); j++) {
-                uint c = s.constValue(i, j).GetCharacter();
-                if (c != uint(' ')) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    // Create a shell with
-    //     a a a a
-    //     b b b b
-    //     ...
-    ShellContents initShellScroll(int rows, int cols) {
-        ShellContents s(rows, cols);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                s.value(i, j).SetCharacter('a' + i);
-            }
-        }
-        return s;
-    }
-    bool checkScrollShell(const ShellContents &s) {
-        for (int i = 0; i < s.rows(); i++) {
-            for (int j = 0; j < s.columns(); j++) {
-                uint c = s.constValue(i, j).GetCharacter();
-                if (c != uint('a' + i)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+public:
+	// Initialize a shell with contents
+	//     a b c d e ..
+	//     a b c d e ..
+	//     ...
+	ShellContents initShell(int rows, int cols) {
+		ShellContents s(rows,cols);
+		for (int i=0; i<rows; i++) {
+			for (int j=0; j<cols; j++) {
+				s.value(i, j).SetCharacter('a' + j);
+			}
+		}
+		return s;
+	}
+	// Check if the contents are the same as returned
+	// by initShell
+	void checkInitShell(const ShellContents& s) {
+		for (int i=0; i<s.rows(); i++) {
+			for (int j=0; j<s.columns(); j++) {
+				QCOMPARE(s.constValue(i, j).GetCharacter(), uint('a'+j));
+			}
+		}
+	}
+	// True if the shell is clear
+	bool checkClear(const ShellContents& s) {
+		for (int i=0; i<s.rows(); i++) {
+			for (int j=0; j<s.columns(); j++) {
+				uint c = s.constValue(i, j).GetCharacter();
+				if (c != uint(' ')) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	// Create a shell with
+	//     a a a a
+	//     b b b b
+	//     ...
+	ShellContents initShellScroll(int rows, int cols) {
+		ShellContents s(rows,cols);
+		for (int i=0; i<rows; i++) {
+			for (int j=0; j<cols; j++) {
+				s.value(i, j).SetCharacter('a' + i);
+			}
+		}
+		return s;
+	}
+	bool checkScrollShell(const ShellContents& s) {
+		for (int i=0; i<s.rows(); i++) {
+			for (int j=0; j<s.columns(); j++) {
+				uint c = s.constValue(i, j).GetCharacter();
+				if (c != uint('a'+i)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
-  private slots:
-    void cellDefault() {
-        int rows = 40;
-        int cols = 60;
-        ShellContents s(rows, cols);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                QCOMPARE(s.value(i, j).GetCharacter(), uint(' '));
-            }
-        }
+private slots:
+	void cellDefault() {
+		int rows = 40;
+		int cols = 60;
+		ShellContents s(rows,cols);
+		for (int i=0; i<rows; i++) {
+			for (int j=0; j<cols; j++) {
+				QCOMPARE(s.value(i, j).GetCharacter(), uint(' '));
+			}
+		}
 
-        // invalid cells are initialized as red X
-        QCOMPARE(s.value(-1, -1).GetCharacter(), uint('X'));
-        QCOMPARE(s.value(-1, -1).GetBackgroundColor(), QColor(Qt::red));
+		// invalid cells are initialized as red X
+		QCOMPARE(s.value(-1, -1).GetCharacter(), uint('X'));
+		QCOMPARE(s.value(-1, -1).GetBackgroundColor(), QColor(Qt::red));
 
-        QBENCHMARK { ShellContents s(100, 100); }
-    }
+		QBENCHMARK {
+			ShellContents s(100,100);
+		}
+	}
 
-    void resize() {
-        int rows = 40;
-        int cols = 60;
-        ShellContents s = initShell(rows, cols);
+	void resize() {
+		int rows = 40;
+		int cols = 60;
+		ShellContents s = initShell(rows, cols);
 
-        // These should have no effect
-        s.resize(-10, -10);
-        s.resize(0, 0);
+		// These should have no effect
+		s.resize(-10, -10);
+		s.resize(0, 0);
 
-        // resize() changes columns()/rows()
-        s.resize(rows - 1, cols);
-        QCOMPARE(s.rows(), rows - 1);
-        s.resize(rows - 1, cols - 1);
-        QCOMPARE(s.columns(), cols - 1);
+		// resize() changes columns()/rows()
+		s.resize(rows-1, cols);
+		QCOMPARE(s.rows(), rows-1);
+		s.resize(rows-1,cols-1);
+		QCOMPARE(s.columns(), cols-1);
 
-        // shrink
-        s.resize(20, 20);
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
-                QCOMPARE(s.value(i, j).GetCharacter(), uint('a' + j));
-            }
-        }
+		// shrink
+		s.resize(20, 20);
+		for (int i=0; i<20; i++) {
+			for (int j=0; j<20; j++) {
+				QCOMPARE(s.value(i, j).GetCharacter(), uint('a'+j));
+			}
+		}
 
-        // grow
-        s.resize(30, 30);
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
-                QCOMPARE(s.value(i, j).GetCharacter(), uint('a' + j));
-            }
-        }
-        for (int i = 20; i < 30; i++) {
-            for (int j = 20; j < 30; j++) {
-                QCOMPARE(s.value(i, j).GetCharacter(), uint(' '));
-            }
-        }
-    }
+		// grow
+		s.resize(30, 30);
+		for (int i=0; i<20; i++) {
+			for (int j=0; j<20; j++) {
+				QCOMPARE(s.value(i, j).GetCharacter(), uint('a'+j));
+			}
+		}
+		for (int i=20; i<30; i++) {
+			for (int j=20; j<30; j++) {
+				QCOMPARE(s.value(i, j).GetCharacter(), uint(' '));
+			}
+		}
 
-    void resizeBench() {
-        ShellContents s(100, 100);
-        QBENCHMARK { s.resize(50, 50); }
-    }
+	}
 
-    void clearRow() {
-        int rows = 40;
-        int cols = 60;
-        ShellContents s = initShell(rows, cols);
+	void resizeBench() {
+		ShellContents s(100,100);
+		QBENCHMARK {
+			s.resize(50, 50);
+		}
+	}
 
-        s.clearRow(3);
-        // These should have no effect
-        s.clearRow(-1);
-        s.clearRow(55);
+	void clearRow() {
+		int rows = 40;
+		int cols = 60;
+		ShellContents s = initShell(rows, cols);
 
-        for (int i = 0; i < rows; i++) {
-            if (i == 3) {
-                for (int j = 0; j < cols; j++) {
-                    QCOMPARE(s.value(i, j).GetCharacter(), uint(' '));
-                }
-            } else {
-                for (int j = 0; j < cols; j++) {
-                    QCOMPARE(s.value(i, j).GetCharacter(), uint('a' + j));
-                }
-            }
-        }
+		s.clearRow(3);
+		// These should have no effect
+		s.clearRow(-1);
+		s.clearRow(55);
 
-        ShellContents s1 = initShell(rows, cols);
-        // Clear row (starting at col 10)
-        s1.clearRow(20, 10);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (i == 20 && j >= 10) {
-                    QCOMPARE(s1.value(i, j).GetCharacter(), uint(' '));
-                } else {
-                    QCOMPARE(s1.value(i, j).GetCharacter(), uint('a' + j));
-                }
-            }
-        }
-    }
+		for (int i=0; i<rows; i++) {
+			if (i == 3) {
+				for (int j=0; j<cols; j++) {
+					QCOMPARE(s.value(i, j).GetCharacter(), uint(' '));
+				}
+			} else {
+				for (int j=0; j<cols; j++) {
+					QCOMPARE(s.value(i, j).GetCharacter(), uint('a'+j));
+				}
+			}
+		}
 
-    void clearRowBench() {
-        ShellContents s = initShell(100, 100);
-        QBENCHMARK { s.clearRow(50); }
-    }
+		ShellContents s1 = initShell(rows, cols);
+		// Clear row (starting at col 10)
+		s1.clearRow(20, 10);
+		for (int i=0; i<rows; i++) {
+			for (int j=0; j<cols; j++) {
+				if (i == 20 && j >= 10) {
+					QCOMPARE(s1.value(i, j).GetCharacter(), uint(' '));
+				} else {
+					QCOMPARE(s1.value(i, j).GetCharacter(), uint('a'+j));
+				}
+			}
+		}
+	}
 
-    void clearRegion() {
-        int rows = 100;
-        int columns = 100;
-        ShellContents s = initShell(rows, columns);
+	void clearRowBench() {
+		ShellContents s = initShell(100, 100);
+		QBENCHMARK {
+			s.clearRow(50);
+		}
+	}
 
-        // These should have no effect
-        s.clearRegion(200, 0, 10, 10);
-        s.clearRegion(0, 200, 10, 10);
-        s.clearRegion(0, 0, -10, 10);
-        s.clearRegion(0, 0, 10, -10);
-        checkInitShell(s);
+	void clearRegion() {
+		int rows = 100;
+		int columns = 100;
+		ShellContents s = initShell(rows, columns);
 
-        s.clearRegion(0, 0, 10, 10);
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                // QCOMPARE(s.value(i, j), Cell());
-            }
-        }
-        // Similar to checkInitShell
-        for (int i = 10; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                Cell c;
-                c.SetCharacter('a' + j);
-                QCOMPARE(s.value(i, j), c);
-            }
-        }
+		// These should have no effect
+		s.clearRegion(200, 0, 10, 10);
+		s.clearRegion(0, 200, 10, 10);
+		s.clearRegion(0, 0, -10, 10);
+		s.clearRegion(0, 0, 10, -10);
+		checkInitShell(s);
 
-        ShellContents s2 = ShellContents(1, 1);
-        QCOMPARE(s2.value(0, 0), Cell());
-        // A region with size 0 causes no change
-        s2.clearRegion(0, 0, 0, 0, Qt::blue);
-        QCOMPARE(s2.value(0, 0), Cell());
+		s.clearRegion(0, 0, 10, 10);
+		for (int i=0; i<10; i++) {
+			for (int j=0; j<10; j++) {
+				//QCOMPARE(s.value(i, j), Cell());
+			}
+		}
+		// Similar to checkInitShell
+		for (int i=10; i<rows; i++) {
+			for (int j=0; j<columns; j++) {
+				Cell c; c.SetCharacter('a'+j);
+				QCOMPARE(s.value(i, j), c);
+			}
+		}
 
-        ShellContents s3 = ShellContents(4, 4);
-        s3.clearRegion(1, 1, 3, 3, Qt::blue);
-        saveShellContents(s3, "clearRegion.jpg");
-        QCOMPARE(s3.value(0, 0), Cell());
-        QCOMPARE(s3.value(0, 1), Cell());
-        QCOMPARE(s3.value(0, 1), Cell());
-        QCOMPARE(s3.value(1, 1), Cell{QColor{Qt::blue}});
+		ShellContents s2 = ShellContents(1, 1);
+		QCOMPARE(s2.value(0, 0), Cell());
+		// A region with size 0 causes no change
+		s2.clearRegion(0, 0, 0, 0, Qt::blue);
+		QCOMPARE(s2.value(0, 0), Cell());
 
-        QCOMPARE(s3.value(3, 3), Cell());
-    }
+		ShellContents s3 = ShellContents(4, 4);
+		s3.clearRegion(1, 1, 3, 3, Qt::blue);
+		saveShellContents(s3, "clearRegion.jpg");
+		QCOMPARE(s3.value(0, 0), Cell());
+		QCOMPARE(s3.value(0, 1), Cell());
+		QCOMPARE(s3.value(0, 1), Cell());
+		QCOMPARE(s3.value(1, 1), Cell{ QColor{ Qt::blue } });
 
-    void clearAll() {
-        int rows = 26;
-        int cols = 100;
-        ShellContents s = initShell(rows, cols);
+		QCOMPARE(s3.value(3, 3), Cell());
+	}
 
-        s.clearAll();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                QCOMPARE(s.value(i, j), Cell());
-            }
-        }
-    }
+	void clearAll() {
+		int rows = 26;
+		int cols = 100;
+		ShellContents s = initShell(rows, cols);
+		
+		s.clearAll();
+		for (int i=0; i<rows; i++) {
+			for (int j=0; j<cols; j++) {
+				QCOMPARE(s.value(i, j), Cell());
+			}
+		}
+	}
 
-    void scrollRegion() {
-        int rows = 100;
-        int cols = 100;
+	void scrollRegion() {
+		int rows = 100;
+		int cols = 100;
 
-        ShellContents s0 = initShell(rows, cols);
-        // This does nothing
-        s0.scroll(0);
-        checkInitShell(s0);
+		ShellContents s0 = initShell(rows, cols);
+		// This does nothing
+		s0.scroll(0);
+		checkInitShell(s0);
 
-        // This is the same as clear
-        s0.scroll(100);
-        QVERIFY(checkClear(s0));
+		// This is the same as clear
+		s0.scroll(100);
+		QVERIFY(checkClear(s0));
 
-        ShellContents s1 = initShell(rows, cols);
-        // This is the same as clear (scrolls to bottom)
-        s1.scroll(-100);
-        QVERIFY(checkClear(s1));
+		ShellContents s1 = initShell(rows, cols);
+		// This is the same as clear (scrolls to bottom)
+		s1.scroll(-100);
+		QVERIFY(checkClear(s1));
 
-        // Scroll 10 lines up
-        ShellContents s2 = initShellScroll(rows, cols);
-        s2.scroll(10);
-        for (int i = 0; i < rows - 10; i++) {
-            for (int j = 0; j < cols; j++) {
-                QCOMPARE(s2.value(i, j).GetCharacter(), uint('a' + i + 10));
-            }
-        }
-        for (int i = rows - 10; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                // The bottom region is empty
-                QCOMPARE(s2.value(i, j).GetCharacter(), uint(' '));
-            }
-        }
+		// Scroll 10 lines up
+		ShellContents s2 = initShellScroll(rows,cols);
+		s2.scroll(10);
+		for (int i=0; i<rows-10; i++) {
+			for (int j=0; j<cols; j++) {
+				QCOMPARE(s2.value(i, j).GetCharacter(), uint('a'+i+10));
+			}
+		}
+		for (int i=rows-10; i<rows; i++) {
+			for (int j=0; j<cols; j++) {
+				// The bottom region is empty
+				QCOMPARE(s2.value(i, j).GetCharacter(), uint(' '));
+			}
+		}
 
-        // Scroll 10 lines down
-        ShellContents s3 = initShellScroll(rows, cols);
-        s3.scroll(-10);
-        for (int i = 10; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                QCOMPARE(s3.value(i, j).GetCharacter(), uint('a' + i - 10));
-            }
-        }
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < cols; j++) {
-                // The top region is empty
-                QCOMPARE(s3.value(i, j).GetCharacter(), uint(' '));
-            }
-        }
-    }
+		// Scroll 10 lines down
+		ShellContents s3 = initShellScroll(rows,cols);
+		s3.scroll(-10);
+		for (int i=10; i<rows; i++) {
+			for (int j=0; j<cols; j++) {
+				QCOMPARE(s3.value(i, j).GetCharacter(), uint('a'+i-10));
+			}
+		}
+		for (int i=0; i<10; i++) {
+			for (int j=0; j<cols; j++) {
+				// The top region is empty
+				QCOMPARE(s3.value(i, j).GetCharacter(), uint(' '));
+			}
+		}
+	}
 
-    void scrollRegion2() {
-        int rows = 100;
-        int cols = 100;
+	void scrollRegion2() {
+		int rows = 100;
+		int cols = 100;
 
-        ShellContents s0 = initShell(rows, cols);
-        s0.clearRow(0);
-        s0.clearRow(99);
+		ShellContents s0 = initShell(rows, cols);
+		s0.clearRow(0);
+		s0.clearRow(99);
 
-        // FIXME: is this inclusive or NOT?
-        s0.scrollRegion(1, 99, 0, 100, 1);
+		// FIXME: is this inclusive or NOT?
+		s0.scrollRegion(1, 99, 0, 100, 1);
 
-        for (int j = 0; j < cols; j++) {
-            QCOMPARE(s0.value(0, j), Cell());
-            QCOMPARE(s0.value(cols - 1, j), Cell());
-        }
-        s0.scrollRegion(1, 99, 0, 100, -1);
-        for (int j = 0; j < cols; j++) {
-            QCOMPARE(s0.value(0, j), Cell());
-            QCOMPARE(s0.value(cols - 1, j), Cell());
-        }
-    }
+		for (int j=0; j<cols; j++) {
+			QCOMPARE(s0.value(0, j),  Cell());
+			QCOMPARE(s0.value(cols-1, j),  Cell());
+		}
+		s0.scrollRegion(1, 99, 0, 100, -1);
+		for (int j=0; j<cols; j++) {
+			QCOMPARE(s0.value(0, j),  Cell());
+			QCOMPARE(s0.value(cols-1, j),  Cell());
+		}
+	}
 
-    void put() {
-        int rows = 10;
-        int cols = 10;
+	void put() {
+		int rows = 10;
+		int cols = 10;
 
-        ShellContents s0(rows, cols);
-        s0.put("HelloWorld", 0, 0);
+		ShellContents s0(rows, cols);
+		s0.put("HelloWorld", 0, 0);
 
-        QCOMPARE(s0.value(0, 0).GetCharacter(), uint('H'));
-        QCOMPARE(s0.value(0, 1).GetCharacter(), uint('e'));
-        QCOMPARE(s0.value(0, 2).GetCharacter(), uint('l'));
-        QCOMPARE(s0.value(0, 3).GetCharacter(), uint('l'));
-        QCOMPARE(s0.value(0, 4).GetCharacter(), uint('o'));
-        QCOMPARE(s0.value(0, 5).GetCharacter(), uint('W'));
-        QCOMPARE(s0.value(0, 6).GetCharacter(), uint('o'));
-        QCOMPARE(s0.value(0, 7).GetCharacter(), uint('r'));
-        QCOMPARE(s0.value(0, 8).GetCharacter(), uint('l'));
-        QCOMPARE(s0.value(0, 9).GetCharacter(), uint('d'));
+		QCOMPARE(s0.value(0, 0).GetCharacter(), uint('H'));
+		QCOMPARE(s0.value(0, 1).GetCharacter(), uint('e'));
+		QCOMPARE(s0.value(0, 2).GetCharacter(), uint('l'));
+		QCOMPARE(s0.value(0, 3).GetCharacter(), uint('l'));
+		QCOMPARE(s0.value(0, 4).GetCharacter(), uint('o'));
+		QCOMPARE(s0.value(0, 5).GetCharacter(), uint('W'));
+		QCOMPARE(s0.value(0, 6).GetCharacter(), uint('o'));
+		QCOMPARE(s0.value(0, 7).GetCharacter(), uint('r'));
+		QCOMPARE(s0.value(0, 8).GetCharacter(), uint('l'));
+		QCOMPARE(s0.value(0, 9).GetCharacter(), uint('d'));
 
-        s0.put("HelloWorld", 5, 5);
-        saveShellContents(s0, "shell.jpg");
-        QCOMPARE(s0.value(5, 0).GetCharacter(), uint(' '));
-        QCOMPARE(s0.value(5, 1).GetCharacter(), uint(' '));
-        QCOMPARE(s0.value(5, 2).GetCharacter(), uint(' '));
-        QCOMPARE(s0.value(5, 3).GetCharacter(), uint(' '));
-        QCOMPARE(s0.value(5, 4).GetCharacter(), uint(' '));
-        QCOMPARE(s0.value(5, 5).GetCharacter(), uint('H'));
-        QCOMPARE(s0.value(5, 6).GetCharacter(), uint('e'));
-        QCOMPARE(s0.value(5, 7).GetCharacter(), uint('l'));
-        QCOMPARE(s0.value(5, 8).GetCharacter(), uint('l'));
-        QCOMPARE(s0.value(5, 9).GetCharacter(), uint('o'));
-    }
+		s0.put("HelloWorld", 5, 5);
+		saveShellContents(s0, "shell.jpg");
+		QCOMPARE(s0.value(5, 0).GetCharacter(), uint(' '));
+		QCOMPARE(s0.value(5, 1).GetCharacter(), uint(' '));
+		QCOMPARE(s0.value(5, 2).GetCharacter(), uint(' '));
+		QCOMPARE(s0.value(5, 3).GetCharacter(), uint(' '));
+		QCOMPARE(s0.value(5, 4).GetCharacter(), uint(' '));
+		QCOMPARE(s0.value(5, 5).GetCharacter(), uint('H'));
+		QCOMPARE(s0.value(5, 6).GetCharacter(), uint('e'));
+		QCOMPARE(s0.value(5, 7).GetCharacter(), uint('l'));
+		QCOMPARE(s0.value(5, 8).GetCharacter(), uint('l'));
+		QCOMPARE(s0.value(5, 9).GetCharacter(), uint('o'));
+	}
 
-    // Grab test cases from ../test/shellcontents
-    void cases() {
-        QDir dir("../test/shellcontents/");
-        QFileInfoList files = dir.entryInfoList();
-        foreach (const QFileInfo &fi, files) {
-            if (!fi.isFile() || !fi.fileName().startsWith("shell") ||
-                fi.suffix() != "txt") {
-                continue;
-            }
-            ShellContents s(0, 0);
-            QCOMPARE(s.fromFile(fi.absoluteFilePath()), true);
+	// Grab test cases from ../test/shellcontents
+	void cases() {
+		QDir dir("../test/shellcontents/");
+		QFileInfoList files = dir.entryInfoList();
+		foreach(const QFileInfo &fi, files) {
+			if (!fi.isFile() || !fi.fileName().startsWith("shell")
+					|| fi.suffix() != "txt") {
+				continue;
+			}
+			ShellContents s(0, 0);
+			QCOMPARE(s.fromFile(fi.absoluteFilePath()), true);
+			
+			QString out("test/");
+			out.append(fi.fileName().append(".out.jpeg"));
+			saveShellContents(s, out);
 
-            QString out("test/");
-            out.append(fi.fileName().append(".out.jpeg"));
-            saveShellContents(s, out);
-
-            // Compare file with previous test output
-        }
-    }
+			// Compare file with previous test output
+		
+		}
+	}
 };
 
 QTEST_MAIN(Test)

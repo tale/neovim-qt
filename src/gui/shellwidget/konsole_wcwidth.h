@@ -1,5 +1,4 @@
-/* $XFree86: xc/programs/xterm/wcwidth.h,v 1.5 2005/05/03 00:38:25 dickey Exp $
- */
+/* $XFree86: xc/programs/xterm/wcwidth.h,v 1.5 2005/05/03 00:38:25 dickey Exp $ */
 
 /* Markus Kuhn -- 2001-01-12 -- public domain */
 /* Adaptions for KDE by Waldo Bastian <bastian@kde.org> */
@@ -12,6 +11,6 @@
 
 int konsole_wcwidth(uint ucs);
 
-int string_width(const QString &text);
+int string_width(const QString& text);
 
 #endif

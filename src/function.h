@@ -1,49 +1,46 @@
 #ifndef NEOVIM_QT_FUNCTIONS
 #define NEOVIM_QT_FUNCTIONS
 
+#include <QtGlobal>
 #include <QByteArray>
-#include <QDebug>
 #include <QList>
 #include <QPair>
-#include <QPoint>
+#include <QDebug>
 #include <QStringList>
-#include <QtGlobal>
+#include <QPoint>
 
 namespace NeovimQt {
 
 class Function {
-  public:
-    Function();
-    Function(const QString &ret, const QString &name,
-             QList<QPair<QString, QString>> params, bool can_fail);
-    Function(const QString &ret, const QString &name, QList<QString> paramTypes,
-             bool can_fail);
-    bool isValid() const;
-    bool operator==(const Function &other) const;
-    static Function fromVariant(const QVariant &);
-    static QList<QPair<QString, QString>>
-    parseParameters(const QVariantList &obj);
+public:
 
-    /** Whether this function call fail without returning*/
-    bool can_fail;
-    /** Function return type */
-    QString return_type;
-    /** Function name */
-    QString name;
-    /** Function parameter types and name */
-    QList<QPair<QString, QString>> parameters;
+	Function();
+	Function(const QString& ret, const QString& name, QList<QPair<QString,QString> > params, bool can_fail);
+	Function(const QString& ret, const QString& name, QList<QString> paramTypes, bool can_fail);
+	bool isValid() const;
+	bool operator==(const Function& other) const;
+	static Function fromVariant(const QVariant&);
+	static QList<QPair<QString,QString> > parseParameters(const QVariantList& obj);
 
-    QString signature() const;
-    /**
-     * The static list **knowFunctions** holds a list of all the supported
-     * signature. The list is populated at compile time from a code generator.
-     */
-    const static QList<Function> knownFunctions;
+	/** Whether this function call fail without returning*/
+	bool can_fail;
+	/** Function return type */
+	QString return_type;
+	/** Function name */
+	QString name;
+	/** Function parameter types and name */
+	QList<QPair<QString,QString> > parameters;
 
-  private:
-    bool m_valid;
+	QString signature() const;
+	/**
+	 * The static list **knowFunctions** holds a list of all the supported
+	 * signature. The list is populated at compile time from a code generator.
+	 */
+	const static QList<Function> knownFunctions;
+private:
+	bool m_valid;
 };
 
-} // namespace NeovimQt
+}
 
 #endif // NEOVIM_QT_FUNCTIONS
