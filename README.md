@@ -11,6 +11,14 @@ Neovim Qt is a lightweight cross-platform Neovim GUI written in C++ with Qt.
 
 ![NeovimQt Screenshot](https://user-images.githubusercontent.com/11207308/108295028-f79f1b80-7164-11eb-8420-e9950fa97cd0.png)
 
+## Changes in this fork
+- Add support for scrolling direction on macOS
+- Output a better looking app that is codesigned
+- Resolves relative file paths like `.` and `..` in the command line
+- Utilizes a TCP server to open a new window in the existing app instance instead of a new app instance
+	- This is useful for opening files from the command line
+	- This behavior better emulates macOS multi window behavior
+	- Already opened files are brought into focus instead of being duplicated
 
 ## Installing Neovim Qt
 
